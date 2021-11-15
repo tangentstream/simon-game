@@ -7,7 +7,7 @@ win = pygame.display.set_mode((500, 500))
 pygame.display.set_caption('Genius')
 
 
-class button():
+class Button:
     def __init__(self, color, x, y, width, height):
         self.color = color
         self.x = x
@@ -30,10 +30,10 @@ class button():
 
         return False
 
-blue_button = button((0, 0, 255), 50, 50, 200, 200)
-outro_botao = button((255, 255, 0), 250, 50, 200, 200)
-botao_verde = button((0, 255, 0), 50, 250, 200, 200)
-botao_ciano = button((0, 255, 255), 250, 250, 200, 200)
+blue_button = Button((0, 0, 255), 50, 50, 200, 200)
+outro_botao = Button((255, 255, 0), 250, 50, 200, 200)
+botao_verde = Button((0, 255, 0), 50, 250, 200, 200)
+botao_ciano = Button((0, 255, 255), 250, 250, 200, 200)
 
 def redrawWindow():
     win.fill((255,255,255))
@@ -52,9 +52,12 @@ def sortear():
     ordem.append(numero)
     print(ordem)
 
+
+
+
 sortear()
 
-while run == True:
+while run:
     pygame.display.update()
     redrawWindow()
 
@@ -63,38 +66,21 @@ while run == True:
         if event.type == pygame.QUIT:
             run = False
 
-        if event.type == pygame.MOUSEBUTTONDOWN:
-            if ordem.__getitem__(-1) == 1:
-                if blue_button.isOver(pos):
-                    print('Boa')
-                    sortear()
-                else:
-                    print('Errado')
-                    ordem.clear()
+        elif event.type == pygame.MOUSEBUTTONDOWN:
 
-            if ordem.__getitem__(-1) == 2:
-                if outro_botao.isOver(pos):
-                    print('outro')
-                    sortear()
-                else:
-                    print('Errado')
-                    ordem.clear()
+            next_step = ordem[-1]
+            mapping = {
+                1: (blue_button, 'Boa'),
+                2: (outro_botao, 'outro'),
+                3: (botao_verde, 'verde'),
+                4: (botao_ciano, 'ciano')}
+            btn, label = mapping[next_step]
 
-            if ordem.__getitem__(-1) == 3:
-                if botao_verde.isOver(pos):
-                    print('verde')
-                    sortear()
-                else:
-                    print('Errado')
-                    ordem.clear()
-
-            if ordem.__getitem__(-1) == 4:
-                if botao_ciano.isOver(pos):
-                    print('ciano')
-                    sortear()
-                else:
-                    print('Errado')
-                    ordem.clear()
-            run = True
+            if btn.isOver(pos):
+                print(label)
+                sortear()
+            else:
+                print('Errado')
+                # ordem.clear()
 
 pygame.quit()
