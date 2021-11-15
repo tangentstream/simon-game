@@ -1,14 +1,11 @@
 import pygame
 import random
 import time
-pygame.init()
-
-win = pygame.display.set_mode((500, 500))
-pygame.display.set_caption('Genius')
 
 
 class Button:
-    def __init__(self, color, x, y, width, height):
+    def __init__(self, label, color, x, y, width, height):
+        self.label = label
         self.color = color
         self.x = x
         self.y = y
@@ -24,63 +21,67 @@ class Button:
 
     def isOver(self, pos):
         # Pos is the mouse position or a tuple of (x,y) coordinates
-        if pos[0] > self.x and pos[0] < self.x + self.width:
-            if pos[1] > self.y and pos[1] < self.y + self.height:
+        if pos[0] > self.x < self.x + self.width:
+            if pos[1] > self.y < self.y + self.height:
                 return True
-
         return False
 
-blue_button = Button((0, 0, 255), 50, 50, 200, 200)
-outro_botao = Button((255, 255, 0), 250, 50, 200, 200)
-botao_verde = Button((0, 255, 0), 50, 250, 200, 200)
-botao_ciano = Button((0, 255, 255), 250, 250, 200, 200)
 
-def redrawWindow():
-    win.fill((255,255,255))
-    blue_button.draw(win)
-    outro_botao.draw(win)
-    botao_verde.draw(win)
-    botao_ciano.draw(win)
+class Game:
 
-run = True
+    def __init__(self):
+        self.ordem = []; self.sortear()
+        self.buttons = [
+            Button('azul',    (0, 0, 255),    50, 50, 200, 200),
+            Button('amarela', (255, 255, 0), 250, 50, 200, 200),
+            Button('verde',   (0, 255, 0),    50, 250, 200, 200),
+            Button('ciano',   (0, 255, 255), 250, 250, 200, 200)]
 
-ordem = []
+    def sortear(self):
+        """generate the sequence"""
+        # time.sleep(1)
+        self.ordem = []
+        self.ordem.append(random.randint(0, 3))
+        print(self.ordem)
 
-def sortear():
-    time.sleep(1)
-    numero = random.randint(1, 4)
-    ordem.append(numero)
-    print(ordem)
+    def redraw(self, win):
+        win.fill((255, 255, 255))
+        for b in self.buttons:
+            b.draw(win)
 
 
+def main():
+
+    pygame.init()
+    win = pygame.display.set_mode((500, 500))
+    pygame.display.set_caption('Genius')
+
+    game = Game()
+
+    running = True
+
+    while running:
+        pygame.display.update()
+        game.redraw(win)
+
+        for event in pygame.event.get():
+            pos = pygame.mouse.get_pos()
+            if event.type == pygame.QUIT:
+                running = False
+
+            elif event.type == pygame.MOUSEBUTTONDOWN:
+
+                next_step = game.ordem[0]
+                btn = game.buttons[next_step]
+                if btn.isOver(pos):
+                    print(btn.label)
+                    game.sortear()
+                else:
+                    print('Errado')
+                    # ordem.clear()
+
+    pygame.quit()
 
 
-sortear()
-
-while run:
-    pygame.display.update()
-    redrawWindow()
-
-    for event in pygame.event.get():
-        pos = pygame.mouse.get_pos()
-        if event.type == pygame.QUIT:
-            run = False
-
-        elif event.type == pygame.MOUSEBUTTONDOWN:
-
-            next_step = ordem[-1]
-            mapping = {
-                1: (blue_button, 'Boa'),
-                2: (outro_botao, 'outro'),
-                3: (botao_verde, 'verde'),
-                4: (botao_ciano, 'ciano')}
-            btn, label = mapping[next_step]
-
-            if btn.isOver(pos):
-                print(label)
-                sortear()
-            else:
-                print('Errado')
-                # ordem.clear()
-
-pygame.quit()
+if __name__ == "__main__":
+    main()
