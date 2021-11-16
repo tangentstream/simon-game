@@ -21,8 +21,8 @@ class Button:
 
     def isOver(self, pos):
         # Pos is the mouse position or a tuple of (x,y) coordinates
-        if pos[0] > self.x < self.x + self.width:
-            if pos[1] > self.y < self.y + self.height:
+        if self.x < pos[0] < self.x + self.width:
+            if self.y < pos[1] < self.y + self.height:
                 return True
         return False
 
@@ -30,24 +30,45 @@ class Button:
 class Game:
 
     def __init__(self):
-        self.ordem = []; self.sortear()
+        self.sequence = []
+        self.next_step = 0
+        self.level = 3
         self.buttons = [
             Button('azul',    (0, 0, 255),    50, 50, 200, 200),
             Button('amarela', (255, 255, 0), 250, 50, 200, 200),
             Button('verde',   (0, 255, 0),    50, 250, 200, 200),
             Button('ciano',   (0, 255, 255), 250, 250, 200, 200)]
 
-    def sortear(self):
-        """generate the sequence"""
-        # time.sleep(1)
-        self.ordem = []
-        self.ordem.append(random.randint(0, 3))
-        print(self.ordem)
+    def new_sequence(self):
+        """generate a sequence of n steps."""
+        self.sequence = [random.randint(0, 3) for _ in range(self.level)]
+        self.next_step = 0
+        self.play_demo()
+        return self.sequence
+
+    def play_demo(self):
+        print(self.sequence)
 
     def redraw(self, win):
         win.fill((255, 255, 255))
         for b in self.buttons:
             b.draw(win)
+
+    def press_button(self, i):
+        expect = self.sequence[self.next_step]
+        print(f"pressed button {i}:", self.buttons[i].label)
+        print(f"expecting button {expect} at step {self.next_step}")
+        if i == expect:
+            self.next_step += 1
+            print("correto")
+            if self.next_step == len(self.sequence):
+                print("Você ganhou!")
+                self.level += 1
+                self.new_sequence()
+        else:
+            print("Errado!")
+            self.play_demo()
+            self.next_step = 0
 
 
 def main():
@@ -57,6 +78,7 @@ def main():
     pygame.display.set_caption('Genius')
 
     game = Game()
+    game.new_sequence()
 
     running = True
 
@@ -65,20 +87,14 @@ def main():
         game.redraw(win)
 
         for event in pygame.event.get():
-            pos = pygame.mouse.get_pos()
+
             if event.type == pygame.QUIT:
                 running = False
 
             elif event.type == pygame.MOUSEBUTTONDOWN:
-
-                next_step = game.ordem[0]
-                btn = game.buttons[next_step]
-                if btn.isOver(pos):
-                    print(btn.label)
-                    game.sortear()
-                else:
-                    print('Errado')
-                    # ordem.clear()
+                for i, b in enumerate(game.buttons):
+                    if b.isOver(pygame.mouse.get_pos()):
+                        game.press_button(i)
 
     pygame.quit()
 
