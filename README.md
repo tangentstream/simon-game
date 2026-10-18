@@ -4,8 +4,7 @@ A "simon" game in pygame. Four colored buttons that
 flash a growing sequence for the player to repeat. Built live on stream as a
 response to an r/learnpython help request.
 
-Stream:
-[!/r/learnpython : making a simon game](https://www.youtube.com/watch?v=dYVi4Y1UNvU)
+Stream: [![/r/learnpython : making a simon game](https://img.youtube.com/vi/dYVi4Y1UNvU/0.jpg)](https://www.youtube.com/watch?v=dYVi4Y1UNvU)
 
 based on a reddit question here: https://www.reddit.com/r/learnpython/comments/qunumo/making_a_genius/ 
 
